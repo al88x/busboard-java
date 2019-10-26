@@ -1,10 +1,10 @@
 package training.busboard;
 
-import training.busboard.api.ArrivalPredictionApi;
 import training.busboard.model.ArrivalPrediction;
 
 import java.util.List;
 import java.util.Optional;
+
 
 public class Main {
     public static void main(String args[]) {
