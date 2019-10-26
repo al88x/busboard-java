@@ -31,8 +31,8 @@ public class PostcodeGeoApi {
             JsonObject jsonObject = JsonParser.parseString(responseJson.readEntity(String.class)).getAsJsonObject();
             JsonObject result = jsonObject.getAsJsonObject("result");
 
-            return Optional.of(new Location(Double.parseDouble(result.get("longitude").toString()),
-                    Double.parseDouble(result.get("latitude").toString())));
+            return Optional.of(new Location(result.get("longitude").getAsDouble(),
+                    (result.get("latitude").getAsDouble())));
         }
         return Optional.empty();
     }

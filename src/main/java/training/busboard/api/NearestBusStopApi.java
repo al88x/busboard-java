@@ -45,7 +45,7 @@ public class NearestBusStopApi {
 
                 for (Object obj : lineGroup) {
                     //add stopPointId to busStop list
-                    busStops.add(JsonParser.parseString(obj.toString()).getAsJsonObject().get("naptanIdReference").toString().substring(1,13));
+                    busStops.add(JsonParser.parseString(obj.toString()).getAsJsonObject().get("naptanIdReference").getAsString());
                     break;
                 }
             }

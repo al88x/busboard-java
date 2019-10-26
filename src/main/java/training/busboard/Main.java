@@ -17,12 +17,12 @@ public class Main {
         ArrivalPredictionApi predictionApi = new ArrivalPredictionApi();
 
 
-        Optional<Location> wd64hn = geoApi.findGeoLocation("wd64hn");
+        Optional<Location> wd64hn = geoApi.findGeoLocation(args[0]);
         Optional<List<String>> busStops = busStopApi.nearest2BusStopIds(wd64hn.get().getLon(), wd64hn.get().getLat());
 
 
-        Optional<List<ArrivalPrediction>> arrivalPrediction = predictionApi.getArrivalPrediction(busStops.get().get(0), 1);
-        Optional<List<ArrivalPrediction>> arrivalPrediction2 = predictionApi.getArrivalPrediction("490008660N", 1);
+        Optional<List<ArrivalPrediction>> arrivalPrediction = predictionApi.getArrivalPrediction(busStops.get().get(0), 5);
+        Optional<List<ArrivalPrediction>> arrivalPrediction2 = predictionApi.getArrivalPrediction(busStops.get().get(1), 5);
 
         arrivalPrediction.ifPresent(System.out::println);
         arrivalPrediction2.ifPresent(System.out::println);

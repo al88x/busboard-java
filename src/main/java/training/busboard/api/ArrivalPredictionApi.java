@@ -39,13 +39,13 @@ public class ArrivalPredictionApi {
                 ArrivalPrediction prediction = new ArrivalPrediction();
                 JsonObject jsonObject = JsonParser.parseString(o.toString()).getAsJsonObject();
 
-                prediction.setNaptanId(jsonObject.get("naptanId").toString());
-                prediction.setStationName(jsonObject.get("stationName").toString());
-                prediction.setLineName(jsonObject.get("lineName").toString());
-                prediction.setDestinationName(jsonObject.get("destinationName").toString());
-                prediction.setPlatformName(jsonObject.get("platformName").toString());
-                prediction.setTimestamp(jsonObject.get("timestamp").toString());
-                prediction.setTimeToStation(jsonObject.get("timeToStation").toString());
+                prediction.setNaptanId(jsonObject.get("naptanId").getAsString());
+                prediction.setStationName(jsonObject.get("stationName").getAsString());
+                prediction.setLineName(jsonObject.get("lineName").getAsString());
+                prediction.setDestinationName(jsonObject.get("destinationName").getAsString());
+                prediction.setPlatformName(jsonObject.get("platformName").getAsString());
+                prediction.setTimestamp(jsonObject.get("timestamp").getAsString());
+                prediction.setTimeToStation(jsonObject.get("timeToStation").getAsString());
 
                 predictionList.add(prediction);
             }
