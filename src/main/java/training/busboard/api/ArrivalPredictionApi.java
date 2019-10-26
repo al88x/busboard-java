@@ -25,7 +25,7 @@ public class ArrivalPredictionApi {
         this.client = ClientBuilder.newBuilder().register(JacksonFeature.class).build();
     }
 
-    public Optional<List<ArrivalPrediction>> getArrivalPrediction(String stopId, int numberOfPredictions) {
+    public synchronized Optional<List<ArrivalPrediction>> getArrivalPrediction(String stopId, int numberOfPredictions) {
         Response responseJson = client.target("https://api.tfl.gov.uk/StopPoint/" + stopId + "/Arrivals?" + APP_ID + "&" + APP_KEY)
                 .request(MediaType.APPLICATION_JSON)
                 .get();
@@ -49,8 +49,11 @@ public class ArrivalPredictionApi {
 
                 predictionList.add(prediction);
             }
+
+
             return Optional.of(predictionList.stream().limit(numberOfPredictions).collect(Collectors.toList()));
         }
+
         return Optional.empty();
     }
 }
