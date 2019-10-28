@@ -1,6 +1,5 @@
 package training.busboard.model;
 
-
 public class ArrivalPrediction {
 
     private String naptanId;

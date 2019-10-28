@@ -1,9 +1,9 @@
-package training.busboard.api;
+package training.busboard.controller;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.glassfish.jersey.jackson.JacksonFeature;
+
 import training.busboard.model.Location;
+import training.busboard.service.ServiceApi;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -17,23 +17,23 @@ import java.util.Optional;
 public class PostcodeGeoApi {
 
     private Client client;
+    private ServiceApi service;
 
     public PostcodeGeoApi() {
         this.client = ClientBuilder.newBuilder().register(JacksonFeature.class).build();
+        service = new ServiceApi();
     }
 
     public synchronized Optional<Location> findGeoLocation(String postcode){
-        Response responseJson = client.target("https://api.postcodes.io/postcodes/" + postcode)
+
+        Response response = client.target("https://api.postcodes.io/postcodes/" + postcode)
                 .request(MediaType.APPLICATION_JSON)
                 .get();
 
-        if(responseJson.getStatus() == 200){
-            JsonObject jsonObject = JsonParser.parseString(responseJson.readEntity(String.class)).getAsJsonObject();
-            JsonObject result = jsonObject.getAsJsonObject("result");
-
-            return Optional.of(new Location(result.get("longitude").getAsDouble(),
-                    (result.get("latitude").getAsDouble())));
+        if(response.getStatus() == 200){
+            return Optional.of(service.getGeoLocation(response));
         }
+
         return Optional.empty();
     }
 }

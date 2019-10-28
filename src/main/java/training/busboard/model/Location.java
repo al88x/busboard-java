@@ -2,19 +2,31 @@ package training.busboard.model;
 
 public class Location {
 
-    private double lon;
-    private double lat;
+    private double longitude;
+    private double latitude;
 
-    public Location(double lon, double lat) {
-        this.lon = lon;
-        this.lat = lat;
+    public Location() {
     }
 
-    public double getLon() {
-        return lon;
+    public Location(double longitude, double latitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
-    public double getLat() {
-        return lat;
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "longitude=" + longitude +
+                ", latitude=" + latitude +
+                '}';
     }
 }

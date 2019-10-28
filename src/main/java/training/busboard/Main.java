@@ -1,9 +1,10 @@
 package training.busboard;
 
-import training.busboard.api.ArrivalPredictionApi;
-import training.busboard.api.NearestBusStopApi;
-import training.busboard.api.PostcodeGeoApi;
+import training.busboard.controller.ArrivalPredictionApi;
+import training.busboard.controller.NearestBusStopApi;
+import training.busboard.controller.PostcodeGeoApi;
 import training.busboard.model.ArrivalPrediction;
+
 import training.busboard.model.Location;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public class Main {
         ArrivalPredictionApi predictionApi = new ArrivalPredictionApi();
 
 
-        Optional<Location> wd64hn = geoApi.findGeoLocation(args[0]);
-        Optional<List<String>> busStops = busStopApi.nearest2BusStopIds(wd64hn.get().getLon(), wd64hn.get().getLat());
+        Optional<Location> postcodeLocation = geoApi.findGeoLocation(args[0]);
+        Optional<List<String>> busStops = busStopApi.nearest2BusStopIds(postcodeLocation.get().getLongitude(), postcodeLocation.get().getLatitude());
 
 
         Optional<List<ArrivalPrediction>> arrivalPrediction = predictionApi.getArrivalPrediction(busStops.get().get(0), 5);
