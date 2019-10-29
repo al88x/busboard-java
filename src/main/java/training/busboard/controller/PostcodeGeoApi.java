@@ -10,6 +10,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.io.IOException;
 import java.util.Optional;
 
 
@@ -24,14 +25,14 @@ public class PostcodeGeoApi {
         service = new ServiceApi();
     }
 
-    public synchronized Optional<Location> findGeoLocation(String postcode){
+    public synchronized Optional<Location> findGeoLocation(String postcode) throws IOException {
 
-        Response response = client.target("https://api.postcodes.io/postcodes/" + postcode)
+        String responseJson = client.target("https://api.postcodes.io/postcodes/" + postcode)
                 .request(MediaType.APPLICATION_JSON)
-                .get();
+                .get(String.class);
 
-        if(response.getStatus() == 200){
-            return Optional.of(service.getGeoLocation(response));
+        if(!responseJson.isEmpty()){
+            return Optional.of(service.getGeoLocation(responseJson));
         }
 
         return Optional.empty();

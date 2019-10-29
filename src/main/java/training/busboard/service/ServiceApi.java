@@ -1,62 +1,65 @@
 package training.busboard.service;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import training.busboard.model.ArrivalPrediction;
 import training.busboard.model.Location;
-import javax.ws.rs.core.Response;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceApi {
-    public List<ArrivalPrediction> processArrivalPredictionResponse(Response responseJson, int numberOfPredictions) {
+    private ObjectMapper objectMapper;
 
-        JsonArray jsonArray = JsonParser.parseString(responseJson.readEntity(String.class)).getAsJsonArray();
+    public ServiceApi() {
+        objectMapper = new ObjectMapper();
+    }
+
+    public List<ArrivalPrediction> processArrivalPredictionResponse(String responseJson, int numberOfPredictions) throws IOException {
+        JsonNode arrayNode = objectMapper.readTree(responseJson);
         List<ArrivalPrediction> predictionList = new ArrayList<>();
-        for (Object o : jsonArray) {
-            ArrivalPrediction prediction = new ArrivalPrediction();
-            JsonObject jsonObject = JsonParser.parseString(o.toString()).getAsJsonObject();
+        ArrivalPrediction prediction = new ArrivalPrediction();
 
-            prediction.setNaptanId(jsonObject.get("naptanId").getAsString());
-            prediction.setStationName(jsonObject.get("stationName").getAsString());
-            prediction.setLineName(jsonObject.get("lineName").getAsString());
-            prediction.setDestinationName(jsonObject.get("destinationName").getAsString());
-            prediction.setPlatformName(jsonObject.get("platformName").getAsString());
-            prediction.setTimestamp(jsonObject.get("timestamp").getAsString());
-            prediction.setTimeToStation(jsonObject.get("timeToStation").getAsString());
+        if(arrayNode.isArray()){
+            for(JsonNode jsonNode : arrayNode){
+                prediction.setNaptanId(jsonNode.get("naptanId").asText());
+                prediction.setStationName(jsonNode.get("stationName").asText());
+                prediction.setLineName(jsonNode.get("lineName").asText());
+                prediction.setDestinationName(jsonNode.get("destinationName").asText());
+                prediction.setPlatformName(jsonNode.get("platformName").asText());
+                prediction.setTimestamp(jsonNode.get("timestamp").asText());
+                prediction.setTimeToStation(jsonNode.get("timeToStation").asText());
 
-            predictionList.add(prediction);
-            if(predictionList.size() == numberOfPredictions){
-                break;
+                predictionList.add(prediction);
+                if (predictionList.size() == numberOfPredictions) {
+                    break;
+                }
             }
         }
         return predictionList;
     }
 
 
-    public List<String> findNearest2BusStops(Response responseJson) {
-        List<String> busStops = new ArrayList<>();
-        JsonArray stopPoints = JsonParser.parseString(responseJson.readEntity(String.class)).getAsJsonObject().getAsJsonArray("stopPoints");
-        for (Object o : stopPoints) {
-            JsonArray lineGroup = JsonParser.parseString(o.toString()).getAsJsonObject().getAsJsonArray("lineGroup");
+    public List<String> findNearest2BusStops(String responseJson) throws IOException {
 
-            for (Object obj : lineGroup) {
-                //add stopPointId to busStop list
-                busStops.add(JsonParser.parseString(obj.toString()).getAsJsonObject().get("naptanIdReference").getAsString());
-                break;
-            }
+        JsonNode jsonNode = objectMapper.readTree(responseJson);
+        List<String> busStops = new ArrayList<>();
+
+        for(JsonNode node : jsonNode.get("stopPoints")){
+            busStops.add(node.get("naptanId").asText());
             if (busStops.size() == 2) {
                 break;
             }
         }
+
         return busStops;
     }
 
-    public Location getGeoLocation(Response responseJson) {
-        JsonObject jsonObject = JsonParser.parseString(responseJson.readEntity(String.class)).getAsJsonObject();
-        JsonObject result = jsonObject.getAsJsonObject("result");
-        return new Location(result.get("longitude").getAsDouble(),
-                result.get("latitude").getAsDouble());
+    public Location getGeoLocation(String responseJson) throws IOException {
+        JsonNode jsonNode = objectMapper.readTree(responseJson);
+
+        return new Location(jsonNode.at("/result/longitude").asDouble(),
+                jsonNode.at("/result/latitude").asDouble());
     }
 }

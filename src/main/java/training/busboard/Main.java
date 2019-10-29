@@ -7,12 +7,13 @@ import training.busboard.model.ArrivalPrediction;
 
 import training.busboard.model.Location;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 
 public class Main {
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         PostcodeGeoApi geoApi = new PostcodeGeoApi();
         NearestBusStopApi busStopApi = new NearestBusStopApi();
         ArrivalPredictionApi predictionApi = new ArrivalPredictionApi();

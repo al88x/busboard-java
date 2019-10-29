@@ -8,6 +8,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,7 @@ public class NearestBusStopApi {
         service = new ServiceApi();
     }
 
-    public synchronized Optional<List<String>> nearest2BusStopIds(double lon, double lat) {
+    public synchronized Optional<List<String>> nearest2BusStopIds(double lon, double lat) throws IOException {
         List<String> busStops;
 
         URI uri = UriBuilder.fromPath("https://api.tfl.gov.uk/StopPoint")
@@ -36,12 +37,12 @@ public class NearestBusStopApi {
                 .queryParam("app_key", APP_KEY)
                 .build();
 
-        Response response = client.target(uri)
+        String responseJson = client.target(uri)
                 .request(MediaType.APPLICATION_JSON)
-                .get();
+                .get(String.class);
 
-                if(response.getStatus() == 200){
-                    return Optional.of(service.findNearest2BusStops(response));
+                if(!responseJson.isEmpty()){
+                    return Optional.of(service.findNearest2BusStops(responseJson));
                 }
 
         return Optional.empty();
