@@ -2,6 +2,7 @@ package training.busboard.controller;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 import training.busboard.model.ArrivalPrediction;
+import training.busboard.model.BusStation;
 import training.busboard.service.ServiceApi;
 
 import javax.ws.rs.client.Client;
@@ -26,7 +27,7 @@ public class ArrivalPredictionApi {
         service = new ServiceApi();
     }
 
-    public synchronized Optional<List<ArrivalPrediction>> getArrivalPrediction(String stopId, int numberOfPredictions) throws IOException {
+    public synchronized Optional<BusStation> getArrivalPrediction(String stopId, int numberOfPredictions) throws IOException {
         List<ArrivalPrediction> predictionList;
 
         URI uri = UriBuilder.fromPath("https://api.tfl.gov.uk/StopPoint/{stopIdParam}/Arrivals")
@@ -39,8 +40,8 @@ public class ArrivalPredictionApi {
                 .get(String.class);
 
         if(!responseJson.isEmpty()){
-            List<ArrivalPrediction> arrivalPredictions = service.processArrivalPredictionResponse(responseJson, numberOfPredictions);
-            return Optional.of(arrivalPredictions);
+            BusStation busStation = service.processArrivalPredictionResponse(responseJson, numberOfPredictions);
+            return Optional.of(busStation);
         }
         return Optional.empty();
     }

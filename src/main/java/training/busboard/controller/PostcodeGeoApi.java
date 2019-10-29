@@ -1,5 +1,7 @@
 package training.busboard.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 import training.busboard.model.Location;
@@ -19,6 +21,9 @@ public class PostcodeGeoApi {
 
     private Client client;
     private ServiceApi service;
+    private String errorMessage;
+
+
 
     public PostcodeGeoApi() {
         this.client = ClientBuilder.newBuilder().register(JacksonFeature.class).build();
@@ -27,14 +32,23 @@ public class PostcodeGeoApi {
 
     public synchronized Optional<Location> findGeoLocation(String postcode) throws IOException {
 
-        String responseJson = client.target("https://api.postcodes.io/postcodes/" + postcode)
+        Response responseJson = client.target("https://api.postcodes.io/postcodes/" + postcode)
                 .request(MediaType.APPLICATION_JSON)
-                .get(String.class);
+                .get();
 
-        if(!responseJson.isEmpty()){
-            return Optional.of(service.getGeoLocation(responseJson));
+
+        if(responseJson.getStatus() == 404){
+            errorMessage = "Postcode: " + postcode + " is invalid. Please enter a valid postcode";
+        }
+
+        if(responseJson.getStatus() == 200){
+            return Optional.of(service.getGeoLocation(responseJson.readEntity(String.class)));
         }
 
         return Optional.empty();
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
     }
 }

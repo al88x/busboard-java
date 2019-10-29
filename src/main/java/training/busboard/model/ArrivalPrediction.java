@@ -8,7 +8,7 @@ public class ArrivalPrediction {
     private String platformName;
     private String destinationName;
     private String timestamp;
-    private String timeToStation;
+    private Integer timeToStation;
 
 
     public ArrivalPrediction() {
@@ -56,18 +56,26 @@ public class ArrivalPrediction {
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return timestamp.substring(11,16);
     }
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 
-    public String getTimeToStation() {
+    public Integer getTimeToStation() {
         return timeToStation;
     }
 
-    public void setTimeToStation(String timeToStation) {
+    public String getTimeToStationMinutes() {
+        int minutes = timeToStation / 60;
+        if(minutes == 0){
+            return "Due";
+        }
+        return minutes + " min";
+    }
+
+    public void setTimeToStation(Integer timeToStation) {
         this.timeToStation = timeToStation;
     }
 

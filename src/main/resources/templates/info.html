@@ -7,12 +7,29 @@
 
     <head>
         <title>Bus Information</title>
+        <meta http-equiv="refresh" content="30"/>
     </head>
     <body>
         <div layout:fragment="content" class="container body-content">
             <h2>Bus Information</h2>
-            <div>
-                <p>You entered postcode <span th:text="${busInfo.postcode}"></span></p>
+            <div th:each="busStation: ${busInfo.busStationList}" style="margin-top: 30px;">
+                <table style="width: 400px; background-color: #b21f2d">
+                    <tr  style="color: white; font-weight: bold">
+                        <td th:text="${busStation.getStationName()}" style="text-align: left; font-weight: bold ; padding-left: 10px"/>
+                        <td th:text="${busStation.getServerTime()}" style="text-align: right; padding-right: 10px"/>
+                    </tr>
+                </table>
+                    <div>
+                        <table style="width: 400px; border: 2px solid #b21f2d">
+                            <div th:each="prediction : ${busStation.getNextBusPredictions()}">
+                                <tr>
+                                    <td th:text="${prediction.getLineName()}" style="text-align: left; padding-left: 10px"/>
+                                    <td th:text="${prediction.getDestinationName()}" style="text-align: left"/>
+                                    <td th:text="${prediction.getTimeToStationMinutes()}" style="text-align: right; padding-right: 10px"/>
+                                </tr>
+                            </div>
+                        </table>
+                    </div>
             </div>
         </div>
     </body>

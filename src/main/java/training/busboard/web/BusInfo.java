@@ -1,13 +1,19 @@
 package training.busboard.web;
 
+import training.busboard.model.BusStation;
+
+import java.util.List;
+
 public class BusInfo {
-    private final String postcode;
+    private List<BusStation> busStationList;
 
-    public BusInfo(String postcode) {
-        this.postcode = postcode;
+    public BusInfo(List<BusStation> busStationList) {
+        this.busStationList = busStationList;
     }
 
-    public String getPostcode() {
-        return postcode;
+    public List<BusStation> getBusStationList() {
+        return busStationList;
     }
+
+
 }
