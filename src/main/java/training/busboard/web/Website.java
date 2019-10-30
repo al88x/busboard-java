@@ -9,20 +9,29 @@ import org.springframework.web.servlet.ModelAndView;
 import training.busboard.controller.ArrivalPredictionApi;
 import training.busboard.controller.NearestBusStopApi;
 import training.busboard.controller.PostcodeGeoApi;
+import training.busboard.controller.exception.*;
+import training.busboard.logger.Logger;
 import training.busboard.model.BusStation;
 import training.busboard.model.Location;
-import training.busboard.service.ServiceApi;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Controller
 @EnableAutoConfiguration
 public class Website {
 
+    PostcodeGeoApi geoApi;
+    NearestBusStopApi busStopApi;
+    ArrivalPredictionApi predictionApi;
 
+    public Website() {
+        this.geoApi = new PostcodeGeoApi();
+        this.busStopApi = new NearestBusStopApi();
+        this.predictionApi = new ArrivalPredictionApi();
+    }
 
     @RequestMapping("/")
     ModelAndView home() {
@@ -31,22 +40,22 @@ public class Website {
 
     @RequestMapping("/busInfo")
     ModelAndView busInfo(@RequestParam("postcode") String postcode) throws IOException {
-        PostcodeGeoApi geoApi = new PostcodeGeoApi();
-        NearestBusStopApi busStopApi = new NearestBusStopApi();
-        ArrivalPredictionApi predictionApi = new ArrivalPredictionApi();
-
-        Optional<Location> geoLocation = geoApi.findGeoLocation(postcode);
-        if(!geoLocation.isPresent()){
-            return new ModelAndView("index", "geoApi", geoApi);
-        }
-
-        Optional<List<String>> busStopIds = busStopApi.nearest2BusStopIds(geoLocation.get().getLongitude(), geoLocation.get().getLatitude());
         List<BusStation> busStations = new ArrayList<>();
-        for(String busStop : busStopIds.get()){
-            busStations.add(predictionApi.getArrivalPrediction(busStop, 5).get());
-        }
+        Logger.info("Client is searching for bus stops with postcode: " + postcode);
 
-        return new ModelAndView("info", "busInfo", new BusInfo(busStations)) ;
+        try {
+            Location geoLocation = geoApi.findGeoLocation(postcode);
+            List<String> busStopIds = busStopApi.nearest2BusStopIds(geoLocation.getLongitude(),
+                    geoLocation.getLatitude());
+            for (String busStop : busStopIds) {
+                busStations.add(predictionApi.getArrivalPrediction(busStop, 5));
+            }
+        } catch (PostcodeNotFoundException | InvalidPostCodeException | BusPredictionNotFound | BusStopIdNotFoundException e) {
+            Logger.debug(e);
+            return new ModelAndView("index", "apiException", e);
+        }
+        Logger.info("Successfully found bus arrival prediction for postcode: " + postcode);
+        return new ModelAndView("info", "busInfo", new BusInfo(busStations));
     }
 
     public static void main(String[] args) throws Exception {

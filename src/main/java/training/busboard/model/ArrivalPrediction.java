@@ -56,7 +56,7 @@ public class ArrivalPrediction {
     }
 
     public String getTimestamp() {
-        return timestamp.substring(11,16);
+        return timestamp.substring(11, 16);
     }
 
     public void setTimestamp(String timestamp) {
@@ -69,7 +69,7 @@ public class ArrivalPrediction {
 
     public String getTimeToStationMinutes() {
         int minutes = timeToStation / 60;
-        if(minutes == 0){
+        if (minutes == 0) {
             return "Due";
         }
         return minutes + " min";

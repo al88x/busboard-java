@@ -1,6 +1,7 @@
 package training.busboard.controller;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
+import training.busboard.controller.exception.BusStopIdNotFoundException;
 import training.busboard.service.ServiceApi;
 
 import javax.ws.rs.client.Client;
@@ -11,7 +12,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
+
 
 import static training.busboard.controller.Constants.APP_ID;
 import static training.busboard.controller.Constants.APP_KEY;
@@ -26,7 +27,7 @@ public class NearestBusStopApi {
         service = new ServiceApi();
     }
 
-    public synchronized Optional<List<String>> nearest2BusStopIds(double lon, double lat) throws IOException {
+    public synchronized List<String> nearest2BusStopIds(double lon, double lat) throws IOException {
         List<String> busStops;
 
         URI uri = UriBuilder.fromPath("https://api.tfl.gov.uk/StopPoint")
@@ -37,15 +38,14 @@ public class NearestBusStopApi {
                 .queryParam("app_key", APP_KEY)
                 .build();
 
-        String responseJson = client.target(uri)
+        Response responseJson = client.target(uri)
                 .request(MediaType.APPLICATION_JSON)
-                .get(String.class);
+                .get();
 
-                if(!responseJson.isEmpty()){
-                    return Optional.of(service.findNearest2BusStops(responseJson));
-                }
-
-        return Optional.empty();
+        if (responseJson.getStatus() == 200) {
+            return service.findNearest2BusStops(responseJson.readEntity(String.class));
+        }
+        throw new BusStopIdNotFoundException("[Searching for bus stations by postcode] - BusStopIdNotFoundException: Bus Stop not found");
     }
 }
 

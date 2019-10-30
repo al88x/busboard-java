@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="layout">
-<!--@thymesVar id="geoApi" type="training.busboard.controller.PostcodeGeoApi"-->
+<!--@thymesVar id="apiException" type="java.lang.RuntimeException"-->
 <head>
     <title>Home page</title>
 </head>
@@ -22,10 +22,9 @@
                     <input type="submit" value="Get Bus Info"/>
                 </fieldset>
             </form>
-            <div th:if="${geoApi != null}">
-                <span th:text="${geoApi.getErrorMessage()}" style="color: #b21f2d"></span>
+            <div th:if="${apiException != null}">
+                <span th:text="${apiException.getMessage()}" style="color: #b21f2d"></span>
             </div>
-            <!--            <span th:text="hello"> </span>-->
         </div>
     </div>
 </div>

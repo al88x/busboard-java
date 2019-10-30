@@ -38,7 +38,7 @@ public class ServiceApi {
                 }
             }
         }
-        return new BusStation((predictionList));
+        return new BusStation(predictionList);
     }
 
 
@@ -53,7 +53,6 @@ public class ServiceApi {
                 break;
             }
         }
-
         return busStops;
     }
 

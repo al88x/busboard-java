@@ -3,34 +3,30 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="layout">
 
-    <!--@thymesVar id="busInfo" type="training.busboard.web.BusInfo"-->
+<!--@thymesVar id="busInfo" type="training.busboard.web.BusInfo"-->
 
-    <head>
-        <title>Bus Information</title>
-        <meta http-equiv="refresh" content="30"/>
-    </head>
-    <body>
-        <div layout:fragment="content" class="container body-content">
-            <h2>Bus Information</h2>
-            <div th:each="busStation: ${busInfo.busStationList}" style="margin-top: 30px;">
-                <table style="width: 400px; background-color: #b21f2d">
-                    <tr  style="color: white; font-weight: bold">
-                        <td th:text="${busStation.getStationName()}" style="text-align: left; font-weight: bold ; padding-left: 10px"/>
-                        <td th:text="${busStation.getServerTime()}" style="text-align: right; padding-right: 10px"/>
-                    </tr>
-                </table>
-                    <div>
-                        <table style="width: 400px; border: 2px solid #b21f2d">
-                            <div th:each="prediction : ${busStation.getNextBusPredictions()}">
-                                <tr>
-                                    <td th:text="${prediction.getLineName()}" style="text-align: left; padding-left: 10px"/>
-                                    <td th:text="${prediction.getDestinationName()}" style="text-align: left"/>
-                                    <td th:text="${prediction.getTimeToStationMinutes()}" style="text-align: right; padding-right: 10px"/>
-                                </tr>
-                            </div>
-                        </table>
-                    </div>
-            </div>
-        </div>
-    </body>
+<head>
+    <title>Bus Information</title>
+    <meta http-equiv="refresh" content="30"/>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <h2>Bus Information</h2>
+    <div th:each="busStation: ${busInfo.busStationList}" style="margin-top: 30px">
+        <table class="rowStyle">
+            <tr class="header">
+                <td colspan="2" th:text="${busStation.getStationName()}" class="left"></td>
+                <td th:text="${busStation.getServerTime()}" class="right"></td>
+            </tr>
+            <tr th:each="prediction : ${busStation.getNextBusPredictions()}"
+                class="rowStyle">
+                <td th:text="${prediction.getLineName()}" class="left"></td>
+                <td th:text="${prediction.getDestinationName()}" class="left"></td>
+                <td th:text="${prediction.getTimeToStationMinutes()}" class="right"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+</div>
+</body>
 </html>
