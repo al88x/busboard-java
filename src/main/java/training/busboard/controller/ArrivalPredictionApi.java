@@ -2,6 +2,7 @@ package training.busboard.controller;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 import training.busboard.controller.exception.BusPredictionNotFound;
+import training.busboard.logger.Logger;
 import training.busboard.model.ArrivalPrediction;
 import training.busboard.model.BusStation;
 import training.busboard.service.ServiceApi;
@@ -45,8 +46,9 @@ public class ArrivalPredictionApi {
             String responseJsonString = responseJson.readEntity(String.class);
             return service.processArrivalPredictionResponse(responseJsonString, numberOfPredictions);
         }
-        throw new BusPredictionNotFound("[Searching for arrival predictions] - " +
+        Logger.debug("[Searching for arrival predictions] - " +
                 "BusPredictionNotFound: Bus predictions not found");
+        throw new BusPredictionNotFound("Bus predictions not found. Please try again");
     }
 
 }

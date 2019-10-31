@@ -4,6 +4,7 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 
 import training.busboard.controller.exception.InvalidPostCodeException;
 import training.busboard.controller.exception.PostcodeNotFoundException;
+import training.busboard.logger.Logger;
 import training.busboard.model.Location;
 import training.busboard.service.ServiceApi;
 
@@ -31,12 +32,14 @@ public class PostcodeGeoApi {
                 .get();
 
         if (responseJson.getStatus() == 404) {
-            throw new InvalidPostCodeException("[Postcode: " + postcode + "] - InvalidPostcodeException: Please enter a valid postcode");
+            Logger.debug("[Postcode: " + postcode + "] - InvalidPostcodeException: Please enter a valid postcode");
+            throw new InvalidPostCodeException("Please enter a valid postcode");
         }
 
         if (responseJson.getStatus() == 200) {
             return service.getGeoLocation(responseJson.readEntity(String.class));
         }
-        throw new PostcodeNotFoundException("[Postcode: " + postcode + "] - PostcodeNotFoundException: Could not find postcode. Please try again");
+        Logger.debug("[Postcode: " + postcode + "] - PostcodeNotFoundException: Could not find postcode. Please try again");
+        throw new PostcodeNotFoundException("Could not find postcode. Please try again");
     }
 }

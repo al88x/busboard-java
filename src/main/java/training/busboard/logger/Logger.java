@@ -6,8 +6,8 @@ public class Logger {
 
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
-    public static void debug(RuntimeException e) {
-        LOGGER.debug(e.getMessage());
+    public static void debug(String message) {
+        LOGGER.debug(message);
     }
 
     public static void info(String message) {

@@ -1,6 +1,8 @@
 package training.busboard.model;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class BusStation {
 
@@ -9,12 +11,17 @@ public class BusStation {
     private String serverTime;
     private List<ArrivalPrediction> nextBusPredictions;
 
+    public BusStation(String busStationId, String stationName) {
+        this.busStationId = busStationId;
+        this.stationName = stationName;
+    }
 
     public BusStation(List<ArrivalPrediction> nextBusPredictions) {
         this.nextBusPredictions = nextBusPredictions;
         this.busStationId = nextBusPredictions.get(0).getNaptanId();
         this.stationName = nextBusPredictions.get(0).getStationName();
         this.serverTime = nextBusPredictions.get(0).getTimestamp();
+        nextBusPredictions.sort(Comparator.comparingInt(ArrivalPrediction::getTimeToStation));
     }
 
     public String getServerTime() {
@@ -56,5 +63,18 @@ public class BusStation {
                 ", stationName='" + stationName + '\'' +
                 ", nextBusPredictions=" + nextBusPredictions +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BusStation)) return false;
+        BusStation that = (BusStation) o;
+        return Objects.equals(getStationName(), that.getStationName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getStationName());
     }
 }

@@ -3,6 +3,10 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="layout">
 <!--@thymesVar id="apiException" type="java.lang.RuntimeException"-->
+<!--@thymesVar id="busStopIds" type="java.util.List<training.busboard.model.BusStation>"-->
+<!--@thymesVar id="home" type="java.lang.String"-->
+
+
 <head>
     <title>Home page</title>
 </head>
@@ -15,15 +19,25 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <form id="messageForm" th:action="@{/busInfo}" method="get">
-                <fieldset>
-                    <legend>Postcode:</legend>
-                    <input type="text" name="postcode">
-                    <input type="submit" value="Get Bus Info"/>
-                </fieldset>
-            </form>
-            <div th:if="${apiException != null}">
-                <span th:text="${apiException.getMessage()}" style="color: #b21f2d"></span>
+            <div th:if="${busStopIds != null && !busStopIds.isEmpty()}">
+                <legend>Choose a bus station:</legend>
+                <div th:each="busStop : ${busStopIds}">
+                    <a th:href="@{'/busInfo?busStopId=' + ${busStop.getBusStationId()}}">
+                        <button class="myButton buttonHover" th:text="${busStop.getStationName()}" style="margin-top: 10px"></button>
+                    </a>
+                </div>
+            </div>
+            <div th:if="${busStopIds == null}">
+                <form id="messageForm1" th:action="@{/}" method="post">
+                    <fieldset>
+                        <legend>Postcode:</legend>
+                        <input type="text" name="postcode">
+                        <input type="submit" value="Get Bus Info"/>
+                    </fieldset>
+                </form>
+                <div th:if="${apiException != null}">
+                    <span th:text="${apiException.getMessage()}" style="color: #b21f2d"></span>
+                </div>
             </div>
         </div>
     </div>

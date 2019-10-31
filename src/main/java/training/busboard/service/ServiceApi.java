@@ -2,6 +2,8 @@ package training.busboard.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import training.busboard.controller.exception.BusPredictionNotFound;
+import training.busboard.logger.Logger;
 import training.busboard.model.ArrivalPrediction;
 import training.busboard.model.BusStation;
 import training.busboard.model.Location;
@@ -33,25 +35,28 @@ public class ServiceApi {
 
                 predictionList.add(prediction);
                 if (predictionList.size() == numberOfPredictions) {
-                    predictionList.sort(Comparator.comparingInt(ArrivalPrediction::getTimeToStation));
                     break;
                 }
             }
+        }
+        if(predictionList.isEmpty()){
+            Logger.debug("[Searching for arrival predictions] - " +
+                    "BusPredictionNotFound: Bus predictions not found");
+            throw new BusPredictionNotFound("Bus predictions not found. Please try again");
         }
         return new BusStation(predictionList);
     }
 
 
-    public List<String> findNearest2BusStops(String responseJson) throws IOException {
+    public Set<BusStation> findNearest2BusStops(String responseJson) throws IOException {
 
         JsonNode jsonNode = objectMapper.readTree(responseJson);
-        List<String> busStops = new ArrayList<>();
+        Set<BusStation> busStops = new HashSet<>();
 
         for (JsonNode node : jsonNode.get("stopPoints")) {
-            busStops.add(node.get("naptanId").asText());
-            if (busStops.size() == 2) {
-                break;
-            }
+            String naptanId = node.get("naptanId").asText();
+            String stationName = node.get("commonName").asText();
+            busStops.add(new BusStation(naptanId, stationName));
         }
         return busStops;
     }

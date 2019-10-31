@@ -2,6 +2,8 @@ package training.busboard.controller;
 
 import org.glassfish.jersey.jackson.JacksonFeature;
 import training.busboard.controller.exception.BusStopIdNotFoundException;
+import training.busboard.logger.Logger;
+import training.busboard.model.BusStation;
 import training.busboard.service.ServiceApi;
 
 import javax.ws.rs.client.Client;
@@ -12,6 +14,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 
 import static training.busboard.controller.Constants.APP_ID;
@@ -27,7 +30,7 @@ public class NearestBusStopApi {
         service = new ServiceApi();
     }
 
-    public synchronized List<String> nearest2BusStopIds(double lon, double lat) throws IOException {
+    public synchronized Set<BusStation> findBusStationsWithinArea(double lon, double lat) throws IOException {
         List<String> busStops;
 
         URI uri = UriBuilder.fromPath("https://api.tfl.gov.uk/StopPoint")
@@ -45,7 +48,8 @@ public class NearestBusStopApi {
         if (responseJson.getStatus() == 200) {
             return service.findNearest2BusStops(responseJson.readEntity(String.class));
         }
-        throw new BusStopIdNotFoundException("[Searching for bus stations by postcode] - BusStopIdNotFoundException: Bus Stop not found");
+        Logger.debug("[Searching for bus stations by postcode] - BusStopIdNotFoundException: Bus Stop not found");
+        throw new BusStopIdNotFoundException("Bus Stop not found.");
     }
 }
 

@@ -12,21 +12,18 @@
 <body>
 <div layout:fragment="content" class="container body-content">
     <h2>Bus Information</h2>
-    <div th:each="busStation: ${busInfo.busStationList}" style="margin-top: 30px">
-        <table class="rowStyle">
-            <tr class="header">
-                <td colspan="2" th:text="${busStation.getStationName()}" class="left"></td>
-                <td th:text="${busStation.getServerTime()}" class="right"></td>
-            </tr>
-            <tr th:each="prediction : ${busStation.getNextBusPredictions()}"
-                class="rowStyle">
-                <td th:text="${prediction.getLineName()}" class="left"></td>
-                <td th:text="${prediction.getDestinationName()}" class="left"></td>
-                <td th:text="${prediction.getTimeToStationMinutes()}" class="right"></td>
-            </tr>
-        </table>
-    </div>
-</div>
+    <table class="rowStyle" style="margin-top: 30px">
+        <tr class="header">
+            <td colspan="2" th:text="${busInfo.getBusStation().getStationName()}" class="left"></td>
+            <td th:text="${busInfo.getBusStation().getServerTime()}" class="right"></td>
+        </tr>
+        <tr th:each="prediction : ${busInfo.getBusStation().getNextBusPredictions()}"
+            class="rowStyle">
+            <td th:text="${prediction.getLineName()}" class="left"></td>
+            <td th:text="${prediction.getDestinationName()}" class="left"></td>
+            <td th:text="${prediction.getTimeToStationMinutes()}" class="right"></td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
